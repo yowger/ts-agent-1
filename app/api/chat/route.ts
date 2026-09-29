@@ -1,16 +1,30 @@
-import { createAgent } from "langchain"
-
-import "dotenv"
+import { createAgent, tool } from "langchain"
 import { ChatOpenAI } from "@langchain/openai"
 import { NextResponse } from "next/server"
+import z from "zod"
+import "dotenv"
 
 const model = new ChatOpenAI({
     model: "gpt-5-mini",
 })
 
+const calculator = tool(
+    async ({ a, b }) => {
+        return a + b
+    },
+    {
+        name: "calculator",
+        description: "Adds two numbers together.",
+        schema: z.object({
+            a: z.number().describe("The first number"),
+            b: z.number().describe("The second number"),
+        }),
+    },
+)
+
 export const agent = createAgent({
     model,
-    tools: [],
+    tools: [calculator],
 })
 
 export async function POST(request: Request) {
