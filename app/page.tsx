@@ -1,6 +1,10 @@
 "use client"
 
+import { useState } from "react"
+
 export default function Page() {
+    const [message, setMessage] = useState("")
+
     async function sendMessage() {
         const response = await fetch("/api/chat", {
             method: "POST",
@@ -8,7 +12,7 @@ export default function Page() {
                 "Content-Type": "application/json",
             },
             body: JSON.stringify({
-                message: "Hello agent!",
+                message,
             }),
         })
 
@@ -18,8 +22,18 @@ export default function Page() {
     }
 
     return (
-        <div>
-            <button onClick={sendMessage} className="border rounded-2xl p-4">Send message</button>
+        <div className="flex gap-2">
+            <input
+                type="text"
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+                placeholder="Ask something..."
+                className="border rounded-2xl p-4"
+            />
+
+            <button onClick={sendMessage} className="border rounded-2xl p-4">
+                Send message
+            </button>
         </div>
     )
 }
